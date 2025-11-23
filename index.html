@@ -37,6 +37,30 @@
       background: black;
     }
 
+    /* Nút tua nhanh / tua chậm */
+    .player-controls {
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .player-controls button {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: none;
+      cursor: pointer;
+      background: #222;
+      color: #fff;
+      font-size: 14px;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .player-controls button:hover {
+      background: #333;
+      transform: translateY(-1px);
+    }
+
     .playlist-title {
       margin-top: 25px;
       font-size: 18px;
@@ -99,6 +123,12 @@
       Trình duyệt của bạn không hỗ trợ video.
     </video>
 
+    <!-- Nút tua nhanh / tua chậm -->
+    <div class="player-controls">
+      <button id="btnBack">⏪ Lùi 15s</button>
+      <button id="btnForward">Tua 15s ⏩</button>
+    </div>
+
     <p class="helper">Nhấn nút ▶ để xem. Chọn video bên dưới để đổi video.</p>
 
     <!-- Danh sách video -->
@@ -107,13 +137,19 @@
   </div>
 
   <script>
-    // 🔹 DANH SÁCH VIDEO – tại đây chỉ cần thêm object là có thêm video
+    // 🔹 DANH SÁCH VIDEO – thêm / xoá / sửa ở đây
     const videos = [
       {
         title: "Video 1 - Google Drive",
         src: "https://www.googleapis.com/drive/v3/files/13umP4hdzmMdlzyVupR8eUSUnWIbYWvmM?alt=media&key=AIzaSyCOVAuXPC9eboBMVxFasDSZ7VZUfShzB3Q",
         thumbnail: "https://i.imgur.com/3d1ZK4Q.jpeg"
       }
+      // Có thể thêm các video khác ở đây
+      // {
+      //   title: "Video 2",
+      //   src: "LINK_VIDEO_2",
+      //   thumbnail: "LINK_THUMB_2"
+      // }
     ];
     // 🔸 HẾT PHẦN CẦN SỬA 🔸
 
@@ -121,6 +157,9 @@
     const mainSource  = document.getElementById("mainSource");
     const mainTitle   = document.getElementById("mainTitle");
     const playlistDiv = document.getElementById("playlist");
+
+    const btnBack     = document.getElementById("btnBack");
+    const btnForward  = document.getElementById("btnForward");
 
     let currentIndex = 0;
 
@@ -163,6 +202,19 @@
       });
     }
 
+    // ⏪ Lùi 15 giây
+    btnBack.addEventListener("click", () => {
+      if (isNaN(mainVideo.duration)) return;
+      mainVideo.currentTime = Math.max(0, mainVideo.currentTime - 15);
+    });
+
+    // ⏩ Tua tới 15 giây
+    btnForward.addEventListener("click", () => {
+      if (isNaN(mainVideo.duration)) return;
+      mainVideo.currentTime = Math.min(mainVideo.duration, mainVideo.currentTime + 15);
+    });
+
+    // Khởi tạo
     renderPlaylist();
     loadVideo(0);
   </script>
