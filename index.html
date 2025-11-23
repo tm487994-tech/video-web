@@ -13,25 +13,159 @@
       align-items: center;
       padding: 20px;
     }
+
     h1 {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
+
+    .container {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .main-title {
+      font-size: 22px;
+      margin: 10px 0 15px 0;
+      opacity: 0.9;
+    }
+
     video {
-      max-width: 100%;
-      width: 800px;
+      width: 100%;
+      max-width: 900px;
       outline: none;
+      border-radius: 10px;
+      background: black;
+    }
+
+    .playlist-title {
+      margin-top: 25px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .playlist {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .video-item {
+      cursor: pointer;
+      width: 170px;
+      background: #1b1b1b;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid transparent;
+      transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s;
+    }
+
+    .video-item.active {
+      border-color: #00bfff;
+      background: #222;
+    }
+
+    .video-item img {
+      width: 100%;
+      height: 95px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .video-item span {
+      display: block;
+      padding: 6px 8px 8px 8px;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    p.helper {
+      margin-top: 10px;
+      text-align: center;
+      opacity: 0.85;
     }
   </style>
 </head>
 <body>
-  <h1>📺 Web xem video đơn giản</h1>
 
-  <!-- THAY LINK DƯỚI NÀY BẰNG LINK VIDEO CỦA BẠN -->
-  <video controls>
-    <source src="https://www.googleapis.com/drive/v3/files/13umP4hdzmMdlzyVupR8eUSUnWIbYWvmM?alt=media&key=AIzaSyCOVAuXPC9eboBMVxFasDSZ7VZUfShzB3Q" type="video/mp4">
-    Trình duyệt của bạn không hỗ trợ video.
-  </video>
+  <div class="container">
+    <h1>📺 Web xem video đơn giản</h1>
 
-  <p>Nhấn nút ▶ để xem.</p>
+    <!-- Tiêu đề video đang phát -->
+    <div id="mainTitle" class="main-title">Đang tải video...</div>
+
+    <!-- Video player chính -->
+    <video id="mainVideo" controls poster="">
+      <source id="mainSource" src="" type="video/mp4">
+      Trình duyệt của bạn không hỗ trợ video.
+    </video>
+
+    <p class="helper">Nhấn nút ▶ để xem. Chọn video bên dưới để đổi video.</p>
+
+    <!-- Danh sách video -->
+    <div class="playlist-title">Danh sách video:</div>
+    <div id="playlist" class="playlist"></div>
+  </div>
+
+  <script>
+    // 🔹 DANH SÁCH VIDEO – tại đây chỉ cần thêm object là có thêm video
+    const videos = [
+      {
+        title: "Video 1 - Google Drive",
+        src: "https://www.googleapis.com/drive/v3/files/13umP4hdzmMdlzyVupR8eUSUnWIbYWvmM?alt=media&key=AIzaSyCOVAuXPC9eboBMVxFasDSZ7VZUfShzB3Q",
+        thumbnail: "https://i.imgur.com/3d1ZK4Q.jpeg"
+      }
+    ];
+    // 🔸 HẾT PHẦN CẦN SỬA 🔸
+
+    const mainVideo   = document.getElementById("mainVideo");
+    const mainSource  = document.getElementById("mainSource");
+    const mainTitle   = document.getElementById("mainTitle");
+    const playlistDiv = document.getElementById("playlist");
+
+    let currentIndex = 0;
+
+    function loadVideo(index) {
+      const v = videos[index];
+      if (!v) return;
+
+      currentIndex = index;
+
+      mainTitle.textContent   = v.title;
+      mainSource.src          = v.src;
+      mainVideo.poster        = v.thumbnail || "";
+      mainVideo.load();
+
+      document.querySelectorAll(".video-item").forEach((item, i) => {
+        if (i === index) item.classList.add("active");
+        else item.classList.remove("active");
+      });
+    }
+
+    function renderPlaylist() {
+      playlistDiv.innerHTML = "";
+      videos.forEach((v, index) => {
+        const item = document.createElement("div");
+        item.className = "video-item";
+
+        const img = document.createElement("img");
+        img.src = v.thumbnail;
+        img.alt = v.title;
+
+        const span = document.createElement("span");
+        span.textContent = v.title;
+
+        item.appendChild(img);
+        item.appendChild(span);
+
+        item.addEventListener("click", () => loadVideo(index));
+
+        playlistDiv.appendChild(item);
+      });
+    }
+
+    renderPlaylist();
+    loadVideo(0);
+  </script>
+
 </body>
 </html>
